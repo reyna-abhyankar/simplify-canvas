@@ -169,6 +169,7 @@ if __name__ == "__main__":
     
 	if count > 4:
 		args.remove(0)
+		args.remove(1)
 		for word in args:
 			s += word
 			s += ' '
