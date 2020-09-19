@@ -29,9 +29,10 @@ def main(command, arg2, arg3, arg4):
     quiz_message(arg2,canvas.get_course(arg3))
   elif(argSplit == 'quizreport'):
     quiz_report(arg2)
-  elif(argSplit == 'quizsub'):
-    get_quiz_submissions(arg2,arg3)
-  elif(argSplit == 'totalnumber'):
+  if(argSplit == 'quizsub'):
+   quiz = course.get_quiz 
+   get_quiz_submissions(quiz)
+  if(argSplit == 'totalnumber'):
     num_students(canvas.get_course(arg2))
   elif(argSplit == 'assignments'):
     print_assignments(course)
@@ -72,7 +73,7 @@ def quiz_report(quiz):
   questions = quiz.get_questions()
     # can also get by ID
 
-def get_quiz_submissions(quiz,quiz_id):
+def get_quiz_submissions(quiz):
   quiz_subs = quiz.get_submissions()
   #quiz_sub = quiz.get_submission(6126370)    # insert submission ID
   stats = quiz.get_statistics()
@@ -119,21 +120,29 @@ def print_assignments(course):
 
 def help(input):
   if(input == "ungraded"):
-    print("Prints out all the ungraded assignments")
+    print("Prints out all the ungraded assignments\n")
+    print("Ex: ungraded [course_id]")
   elif(input == "checksub"):
-    print("For a given user id see if they submitted a specific assignment")
+    print("For a given user id see if they submitted a specific assignment\n")
+    print("Ex: checksub [user_id] [assignment_id]")
   elif(input == "msgquiz"):
-    print("Use this cmd to broadcast a message to students during a quiz")
+    print("Use this cmd to broadcast a message to students during a quiz\n")
+    print("Ex: msgquiz [quiz_id]")
   elif(input == "quizreport"):
-    print("Gets quiz report")
+    print("Gets quiz report\n")
+    print("Ex: quizreport [quiz_id]")
   elif(input == "quizsub"):
-    print("Prints out statistics relating to a specific quiz id")
+    print("Prints out statistics relating to a specific quiz id\n")
+    print("Ex: quizsub [quiz]")
   elif(input == "totalnumber"):
-    print("Displays the total number of users enrolled in the class")
+    print("Displays the total number of users enrolled in the class\n")
+    print("Ex: totalnumber [course_id]")
   elif(input == "printassignments"):
-    print("Prints out all assignments for the class")
+    print("Prints out all assignments for the class\n")
+    print("Ex: printassignments [course_id]")
   elif(input == "studentids"):
-    print("Displays student name and associated user id number")
+    print("Displays student name and associated user id number\n")
+    print("studentids [course_id]")
   else:
     print("Here is a list of all commands, please use help+desiredcommand for more info on specific commands")
     print("ungraded\nchecksub\nmsgquiz\nquizreport\nquizsub\ntotalnumber\nprintassignments\nstudentids")
