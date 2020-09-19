@@ -8,3 +8,5 @@ API_KEY = "7~a0WZUQK2LiJBRU9GBGIIb99it5rA8MMB8Jt5ANEv0C2ilgi0hgwsztOVPebnT0DD"
 # Initialize Canvas object
 canvas = Canvas(API_URL, API_KEY)
 
+course = canvas.get_course(2353385)
+print(course.name)

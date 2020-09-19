@@ -1,5 +1,5 @@
-import {PythonShell} from 'python-shell';
-let pyshell = new PythonShell('scripts.py');
+//let {PythonShell} = require('python-shell')
+//let pyshell = new PythonShell('scripts.py');
 
 require('dotenv').config();
 const express = require('express');
@@ -31,16 +31,30 @@ app.get('/terms', (req, res) => {
   res.send('By installing the Canvas Chatbot for Zoom, you are accept and agree to these terms...');
 });
 
-//Docs
 app.get('/documentation', (req, res) => {
   res.send('');
+});
+
+app.get('/course', (req, res) => {
+  const { spawn } = require('child_process');
+  const pyProg = spawn('python', ['scripts.py']);
+
+  pyProg.stdout.on('data', function(data) {
+
+      console.log(data.toString());
+      res.write(data);
+      res.end('end');
+  });
+  /*pyshell.on('message', function (message) {
+    // received a message sent from the Python script (a simple "print" statement)
+    res.send(message);
+  });*/
 });
 
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
   res.send(process.env.zoom_verification_code);
 });
 
-//Command
 app.post('/assignments', (req, res) => {
   console.log(req.body);
   res.send('Chat received');
