@@ -1,6 +1,3 @@
-//let {PythonShell} = require('python-shell')
-//let pyshell = new PythonShell('scripts.py');
-
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -35,7 +32,120 @@ app.get('/documentation', (req, res) => {
   res.send('');
 });
 
-app.get('/canvas', (req, res) => {
+app.post('/canvasbot', (req, res) => {
+  console.log(req.body)
+  //res.send('Chat received')
+  getChatbotToken()
+
+  function getPhoto (chatbotToken) {
+    request(`https://api.unsplash.com/photos/random?query=${req.body.payload.cmd}&orientation=landscape&client_id=${process.env.unsplash_access_key}`, (error, body) => {
+      if (error) {
+        console.log('Error getting photo from Unsplash.', error)
+        var errors = [
+            {
+              'type': 'section',
+              'sidebar_color': '#D72638',
+              'sections': [{
+                'type': 'message',
+                'text': 'Error getting photo from Unsplash.'
+              }]
+            }
+          ]
+          sendChat(errors, chatbotToken)
+      } else {
+        body = JSON.parse(body.body)
+        if (body.errors) {
+          var errors = [
+            {
+              'type': 'section',
+              'sidebar_color': '#D72638',
+              'sections': body.errors.map((error) => {
+                return { 'type': 'message', 'text': error }
+              })
+            }
+          ]
+          sendChat(errors, chatbotToken)
+        } else {
+          var photo = [
+            {
+              'type': 'section',
+              'sidebar_color': body.color,
+              'sections': [
+                {
+                  'type': 'attachments',
+                  'img_url': body.urls.regular,
+                  'resource_url': body.links.html,
+                  'information': {
+                    'title': {
+                      'text': 'Photo by ' + body.user.name
+                    },
+                    'description': {
+                      'text': 'Click to view on Unsplash'
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+          sendChat(photo, chatbotToken)
+        }
+      }
+    })
+  }
+
+  function getChatbotToken () {
+    request({
+      url: `https://zoom.us/oauth/token?grant_type=client_credentials`,
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + Buffer.from(process.env.zoom_client_id + ':' + process.env.zoom_client_secret).toString('base64')
+      }
+    }, (error, httpResponse, body) => {
+      if (error) {
+        console.log('Error getting chatbot_token from Zoom.', error)
+      } else {
+        body = JSON.parse(body)
+        sendChat(body.access_token)
+      }
+    })
+  }
+
+  function sendChat (chatbotToken) {
+    request({
+      url: 'https://api.zoom.us/v2/im/chat/messages',
+      method: 'POST',
+      json: true,
+      body: {
+        'robot_jid': process.env.zoom_bot_jid,
+        'to_jid': req.body.payload.toJid,
+        'account_id': req.body.payload.accountId,
+        'content': {
+          'head': {
+            'text': 'Canvas'
+          },
+          'body': [{
+            'type': 'message',
+            'text': 'You sent ' + req.body.payload.cmd
+          }]
+        }
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + chatbotToken
+      }
+    }, (error, httpResponse, body) => {
+      if (error) {
+        console.log('Error sending chat.', error)
+      } else {
+        console.log(body)
+      }
+    })
+  }
+  // console.log(req.body);
+  // res.send('Chat received');
+});
+
+app.get('/course', (req, res) => {
   const { spawn } = require('child_process');
   const pyProg = spawn('python', ['canvas.py']);
 
@@ -44,19 +154,10 @@ app.get('/canvas', (req, res) => {
       res.write(data);
       res.end('end');
   });
-  /*pyshell.on('message', function (message) {
-    // received a message sent from the Python script (a simple "print" statement)
-    res.send(message);
-  });*/
 });
 
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
   res.send(process.env.zoom_verification_code);
-});
-
-app.post('/assignments', (req, res) => {
-  console.log(req.body);
-  res.send('Chat received');
 });
 
 app.post('/deauthorize', (req, res) => {
