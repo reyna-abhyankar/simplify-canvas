@@ -43,17 +43,17 @@ stats = quiz.get_statistics()
 studentSize = 0
 users = course.get_users(enrollment_type=['student'])
 for user in users:
-  studentSize=studentSize+1
+  studentSize+=1
 
 teacherSize = 0
 users = course.get_users(enrollment_type=['teacher'])
 for user in users:
-  teacherSize=teacherSize+1
+  teacherSize+=1
 
 taSize = 0
 users = course.get_users(enrollment_type=['ta'])
 for user in users:
-  taSize=taSize+1
+  taSize+=1
 
 print("Teachers: "+str(teacherSize))
 print("TAs: "+str(taSize))
