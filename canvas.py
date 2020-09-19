@@ -22,23 +22,26 @@ def main(command, arg2, arg3, arg4):
   if(argSplit == 'ungraded'):
     course =canvas.get_course(arg2)
     ungraded_assignments(course)
-  if(argSplit == 'checksub'):
+  elif(argSplit == 'checksub'):
     assignment = course.get_assignment(arg3)
     submission_check(arg2,assignment)
-  if(argSplit == 'msgquiz'): #TODO:print list of quiz 
-    quiz_message(arg2,canvas.get_course(arg3))
-  if(argSplit == 'quizreport'):
+  elif(argSplit == 'broadcast'): #TODO:print list of quiz 
+    quiz_message(arg2,arg3,course)
+  elif(argSplit == 'quizreport'):
     quiz_report(arg2)
   if(argSplit == 'quizsub'):
-    get_quiz_submissions(arg2,arg3)
+   quiz = course.get_quiz 
+   get_quiz_submissions(quiz)
   if(argSplit == 'totalnumber'):
     num_students(canvas.get_course(arg2))
-  if(argSplit == 'printassignments'):
+  elif(argSplit == 'assignments'):
     print_assignments(course)
-  if(argSplit == 'studentids'):
-    studentid(course)
+  elif(argSplit == 'studentids'):
+    student_id(course)
+  else:
+    help(arg2)
 
-# NEED PRINT
+# Deprecated
 def user_info(user_id,course):
   user_by_id = course.get_user(user_id)
   users = course.get_users(search_term='Gaurav Mehta')
@@ -49,34 +52,36 @@ def ungraded_assignments(course):
   for assignment in ungraded_assn:
     print(assignment)
 
-# NEED PRINT
+###### NEED PRINT
 def submission_check(user_by_id,assn):
   subs = assn.get_submissions()
   submission = assn.get_submission(user_by_id.id)
+  print(submission)
 
-# NEED PRINT
-def quiz_message(quiz_id,course):        #uncomment out message stuff?
+###### NEED PRINT
+def quiz_message(first,second,course):        #uncomment out message stuff?
   quizzes = course.get_quizzes()
-  quiz = course.get_quiz(quiz_id)       # insert ID
-# quiz.broadcast_message({
-#   "body": "Please take the quiz.",   # arg 2
-#   "recipients": "unsubmitted",       # arg 3
-#   "subject": "ATTENTION"             # arg 4 ? 
-# })
+  quiz = course.get_quiz(17786391)       # insert ID
+quiz.broadcast_message({
+  "body": second,   # arg 2
+  "recipients": "all",       # arg 3
+  "subject": first             # arg 4 ? 
+})
 
-# NEED PRINT
+###### NEED PRINT
 def quiz_report(quiz):
   reports = quiz.get_all_quiz_reports()
-  questions = quiz.get_questions()
+  for report in reports:
+    print(report)
     # can also get by ID
 
-def get_quiz_submissions(quiz,quiz_id):
+def get_quiz_submissions(quiz):
   quiz_subs = quiz.get_submissions()
   #quiz_sub = quiz.get_submission(6126370)    # insert submission ID
   stats = quiz.get_statistics()
   print(stats)
 
-# NEED PRINT
+
 def num_students(course):
   studentSize = 0
   users = course.get_users(enrollment_type=['student'])
@@ -92,8 +97,10 @@ def num_students(course):
   users = course.get_users(enrollment_type=['ta'])
   for user in users:
     taSize+=1
+  print(studentSize+" students")
+  print(taSize+" TAs")
 
-def studentid(course):
+def student_id(course):
   studentSize = 0
   users = course.get_users(enrollment_type=['student'])
   for user in users:
@@ -113,14 +120,45 @@ def print_assignments(course):
 #/assignmentlist
 #/help
 
+def help(input):
+  if(input == "ungraded"):
+    print("Prints out all the ungraded assignments\n")
+    print("Ex: ungraded [course_id]")
+  elif(input == "checksub"):
+    print("For a given user id see if they submitted a specific assignment\n")
+    print("Ex: checksub [user_id] [assignment_id]")
+  elif(input == "msgquiz"):
+    print("Use this cmd to broadcast a message to students during a quiz\n")
+    print("Ex: msgquiz [quiz_id]")
+  elif(input == "quizreport"):
+    print("Gets quiz report\n")
+    print("Ex: quizreport [quiz_id]")
+  elif(input == "quizsub"):
+    print("Prints out statistics relating to a specific quiz id\n")
+    print("Ex: quizsub [quiz]")
+  elif(input == "totalnumber"):
+    print("Displays the total number of users enrolled in the class\n")
+    print("Ex: totalnumber [course_id]")
+  elif(input == "printassignments"):
+    print("Prints out all assignments for the class\n")
+    print("Ex: printassignments [course_id]")
+  elif(input == "studentids"):
+    print("Displays student name and associated user id number\n")
+    print("studentids [course_id]")
+  else:
+    print("Here is a list of all commands, please use help+desiredcommand for more info on specific commands")
+    print("ungraded\nchecksub\nmsgquiz\nquizreport\nquizsub\ntotalnumber\nprintassignments\nstudentids")
 
-    
+
+
+
 if __name__ == "__main__":
 	args = sys.argv[1].split(' ')
 	cmd = args[0]
 	arg2 = ''
 	arg3 = ''
 	arg4 = ''
+	s = ''
 	count = len(args)
 	if count > 1:
 		arg2 = args[1]
@@ -128,6 +166,12 @@ if __name__ == "__main__":
 		arg3 = args[2]
 	if count > 3:
 		arg4 = args[3]
-
+    
+	if count > 4:
+		args.remove(0)
+		for word in args:
+			s += word
+			s += ' '
+		arg3 = s
 	main(cmd, arg2, arg3, arg4)
 	sys.stdout.flush()
