@@ -71,8 +71,8 @@ def print_stuff():
     #/help
 
 def main():
-    print(sys.argv[1])
+    print(sys.argv[1], end=' ')
 
 if __name__ == '__main__':
     main()
-    #sys.stdout.flush()
+    sys.stdout.flush()

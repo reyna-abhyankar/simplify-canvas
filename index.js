@@ -43,10 +43,16 @@ app.post('/canvasbot', (req, res) => {
   const { spawn } = require('child_process');
   const pyProg = spawn('python', ['canvas.py', args]);
 
-  function pythonScript(body) {
-    pyProg.stdout.on('data', function(data) {
+
+  function pyScript(body) {
+    return new Promise(function (fulfill) {
+      pyProg.stdout.on('data', function(data) {
         returnData = data.toString();
-        console.log(returnData);
+        console.log("Python "+returnData);
+        fulfill(returnData);
+      });
+    }).then(() => {
+      sendChat(body.access_token, returnData);
     });
   }
 
@@ -64,14 +70,13 @@ app.post('/canvasbot', (req, res) => {
         console.log('Error getting chatbot_token from Zoom.', error);
       } else {
         body = JSON.parse(body);
-        const pyPromise = new Promise(pythonScript(body)).then(sendChat(body.access_token));
-        //pythonScript(body).then(sendChat(body.access_token));
+        pyScript(body);
       }
     })
   }
 
-  function sendChat (chatbotToken) {
-    console.log(returnData);
+  function sendChat (chatbotToken, data) {
+    console.log("Send chat "+data);
     request({
       url: 'https://api.zoom.us/v2/im/chat/messages',
       method: 'POST',
@@ -86,7 +91,7 @@ app.post('/canvasbot', (req, res) => {
           },
           'body': [{
             'type': 'message',
-            'text': returnData,
+            'text': data,
           }]
         }
       },
