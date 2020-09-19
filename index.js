@@ -35,12 +35,11 @@ app.get('/documentation', (req, res) => {
   res.send('');
 });
 
-app.get('/course', (req, res) => {
+app.get('/canvas', (req, res) => {
   const { spawn } = require('child_process');
-  const pyProg = spawn('python', ['scripts.py']);
+  const pyProg = spawn('python', ['canvas.py']);
 
   pyProg.stdout.on('data', function(data) {
-
       console.log(data.toString());
       res.write(data);
       res.end('end');
