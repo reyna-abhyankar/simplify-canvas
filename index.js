@@ -1,3 +1,4 @@
+import {PythonShell} from 'python-shell'
 require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
