@@ -22,7 +22,7 @@ def main(command, arg2, arg3, arg4):
   if(argSplit == 'ungraded'):
     course =canvas.get_course(arg2)
     ungraded_assignments(course)
-  if(argSplit == 'checksub'):
+  elif(argSplit == 'checksub'):
     assignment = course.get_assignment(arg3)
     submission_check(arg2,assignment)
   if(argSplit == 'msgquiz'): #TODO:print list of quiz 
@@ -94,6 +94,8 @@ def num_students(course):
   users = course.get_users(enrollment_type=['ta'])
   for user in users:
     taSize+=1
+  print(studentSize+" students")
+  print(taSize+" TAs")
 
 def student_id(course):
   studentSize = 0
@@ -133,9 +135,8 @@ def help(input):
   elif(input == "studentids"):
     print("Displays student name and associated user id number")
   else:
-    print("Here is a list of all commands, please use help+desiredcommand for more info on specific commands\n")
-    print("ungraded\nchecksub\n\nmsgquiz\nquizreport\nquizsub\ntotalnumber\nprintassignments\nstudentids")
-    
+    print("Here is a list of all commands, please use help+desiredcommand for more info on specific commands")
+    print("ungraded\nchecksub\nmsgquiz\nquizreport\nquizsub\ntotalnumber\nprintassignments\nstudentids")
 
 
 
