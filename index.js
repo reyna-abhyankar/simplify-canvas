@@ -2,12 +2,14 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+const { send } = require('process');
 
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(bodyParser.json());
 
+/* Probably don't need these */
 app.get('/', (req, res) => {
   res.send('Welcome to the Canvas Chatbot for Zoom!');
 });
@@ -31,67 +33,24 @@ app.get('/terms', (req, res) => {
 app.get('/documentation', (req, res) => {
   res.send('');
 });
+// ************************* //
 
 app.post('/canvasbot', (req, res) => {
-  console.log(req.body)
-  //res.send('Chat received')
-  getChatbotToken()
+  console.log(req.body);
+  let args = req.body.payload.cmd;
+  let returnData = 'ye';
 
-  function getPhoto (chatbotToken) {
-    request(`https://api.unsplash.com/photos/random?query=${req.body.payload.cmd}&orientation=landscape&client_id=${process.env.unsplash_access_key}`, (error, body) => {
-      if (error) {
-        console.log('Error getting photo from Unsplash.', error)
-        var errors = [
-            {
-              'type': 'section',
-              'sidebar_color': '#D72638',
-              'sections': [{
-                'type': 'message',
-                'text': 'Error getting photo from Unsplash.'
-              }]
-            }
-          ]
-          sendChat(errors, chatbotToken)
-      } else {
-        body = JSON.parse(body.body)
-        if (body.errors) {
-          var errors = [
-            {
-              'type': 'section',
-              'sidebar_color': '#D72638',
-              'sections': body.errors.map((error) => {
-                return { 'type': 'message', 'text': error }
-              })
-            }
-          ]
-          sendChat(errors, chatbotToken)
-        } else {
-          var photo = [
-            {
-              'type': 'section',
-              'sidebar_color': body.color,
-              'sections': [
-                {
-                  'type': 'attachments',
-                  'img_url': body.urls.regular,
-                  'resource_url': body.links.html,
-                  'information': {
-                    'title': {
-                      'text': 'Photo by ' + body.user.name
-                    },
-                    'description': {
-                      'text': 'Click to view on Unsplash'
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-          sendChat(photo, chatbotToken)
-        }
-      }
-    })
+  const { spawn } = require('child_process');
+  const pyProg = spawn('python', ['canvas.py', args]);
+
+  function pythonScript(body) {
+    pyProg.stdout.on('data', function(data) {
+        returnData = data.toString();
+        console.log(returnData);
+    });
   }
+
+  getChatbotToken();
 
   function getChatbotToken () {
     request({
@@ -102,15 +61,17 @@ app.post('/canvasbot', (req, res) => {
       }
     }, (error, httpResponse, body) => {
       if (error) {
-        console.log('Error getting chatbot_token from Zoom.', error)
+        console.log('Error getting chatbot_token from Zoom.', error);
       } else {
-        body = JSON.parse(body)
-        sendChat(body.access_token)
+        body = JSON.parse(body);
+        const pyPromise = new Promise(pythonScript(body)).then(sendChat(body.access_token));
+        //pythonScript(body).then(sendChat(body.access_token));
       }
     })
   }
 
   function sendChat (chatbotToken) {
+    console.log(returnData);
     request({
       url: 'https://api.zoom.us/v2/im/chat/messages',
       method: 'POST',
@@ -125,7 +86,7 @@ app.post('/canvasbot', (req, res) => {
           },
           'body': [{
             'type': 'message',
-            'text': 'You sent ' + req.body.payload.cmd
+            'text': returnData,
           }]
         }
       },
@@ -135,14 +96,12 @@ app.post('/canvasbot', (req, res) => {
       }
     }, (error, httpResponse, body) => {
       if (error) {
-        console.log('Error sending chat.', error)
+        console.log('Error sending chat.', error);
       } else {
-        console.log(body)
+        console.log(body);
       }
-    })
+    });
   }
-  // console.log(req.body);
-  // res.send('Chat received');
 });
 
 app.get('/course', (req, res) => {
@@ -194,3 +153,74 @@ app.post('/deauthorize', (req, res) => {
 });
 
 app.listen(port, () => console.log(`Canvas Chatbot for Zoom listening on port ${port}!`));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function getPhoto (chatbotToken) {
+  request(`https://api.unsplash.com/photos/random?query=${req.body.payload.cmd}&orientation=landscape&client_id=${process.env.unsplash_access_key}`, (error, body) => {
+    if (error) {
+      console.log('Error getting photo from Unsplash.', error)
+      var errors = [
+          {
+            'type': 'section',
+            'sidebar_color': '#D72638',
+            'sections': [{
+              'type': 'message',
+              'text': 'Error getting photo from Unsplash.'
+            }]
+          }
+        ]
+        sendChat(errors, chatbotToken)
+    } else {
+      body = JSON.parse(body.body)
+      if (body.errors) {
+        var errors = [
+          {
+            'type': 'section',
+            'sidebar_color': '#D72638',
+            'sections': body.errors.map((error) => {
+              return { 'type': 'message', 'text': error }
+            })
+          }
+        ]
+        sendChat(errors, chatbotToken)
+      } else {
+        var photo = [
+          {
+            'type': 'section',
+            'sidebar_color': body.color,
+            'sections': [
+              {
+                'type': 'attachments',
+                'img_url': body.urls.regular,
+                'resource_url': body.links.html,
+                'information': {
+                  'title': {
+                    'text': 'Photo by ' + body.user.name
+                  },
+                  'description': {
+                    'text': 'Click to view on Unsplash'
+                  }
+                }
+              }
+            ]
+          }
+        ]
+        sendChat(photo, chatbotToken)
+      }
+    }
+  })
+}

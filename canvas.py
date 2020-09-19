@@ -1,4 +1,5 @@
 import os
+import sys
 
 # Import Canvas
 from canvasapi import Canvas
@@ -55,15 +56,23 @@ users = course.get_users(enrollment_type=['ta'])
 for user in users:
   taSize+=1
 
-print("Teachers: "+str(teacherSize))
-print("TAs: "+str(taSize))
-print("Students: "+str(studentSize))
+def print_stuff():
+    print("Teachers: "+str(teacherSize))
+    print("TAs: "+str(taSize))
+    print("Students: "+str(studentSize))
 
 
-assignments = course.get_assignments()
+    assignments = course.get_assignments()
 
-for assignment in assignments:
-  print(assignment)
-#/quizlist
-#/assignmentlist
-#/help
+    for assignment in assignments:
+        print(assignment)
+    #/quizlist
+    #/assignmentlist
+    #/help
+
+def main():
+    print(sys.argv[1])
+
+if __name__ == '__main__':
+    main()
+    #sys.stdout.flush()
