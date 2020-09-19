@@ -25,7 +25,7 @@ def main(command, arg2, arg3, arg4):
   elif(argSplit == 'checksub'):
     assignment = course.get_assignment(arg3)
     submission_check(arg2,assignment)
-  elif(argSplit == 'broadcast'): #TODO:print list of quiz 
+  elif(argSplit == 'broadcast'):
     quiz_message(arg2,arg3,course)
   elif(argSplit == 'quizreport'):
     quiz_report(arg2)
@@ -36,6 +36,8 @@ def main(command, arg2, arg3, arg4):
     num_students(canvas.get_course(arg2))
   elif(argSplit == 'assignments'):
     print_assignments(course)
+  elif(argSplit == 'quizzes'):
+    print_quizzes(course)
   elif(argSplit == 'studentids'):
     student_id(course)
   else:
@@ -60,7 +62,6 @@ def submission_check(user_by_id,assn):
 
 ###### NEED PRINT
 def quiz_message(first,second,course):
-  #quizzes = course.get_quizzes()
   quiz = course.get_quiz(6128124)
   quiz.broadcast_message({"body": second, "recipients": "all", "subject": first})
   print("Message broadcasted!", end='')
@@ -70,14 +71,11 @@ def quiz_report(quiz):
   reports = quiz.get_all_quiz_reports()
   for report in reports:
     print(report)
-    # can also get by ID
 
 def get_quiz_submissions(quiz):
   quiz_subs = quiz.get_submissions()
-  #quiz_sub = quiz.get_submission(6126370)    # insert submission ID
   stats = quiz.get_statistics()
   print(stats)
-
 
 def num_students(course):
   studentSize = 0
@@ -103,19 +101,17 @@ def student_id(course):
   for user in users:
     print(user)
 
-#print("Teachers: "+str(teacherSize))
-#print("TAs: "+str(taSize))
-#print("Students: "+str(studentSize))
-
+def print_quizzes(course):
+  quizzes = course.get_quizzes()
+  for quiz in quizzes:
+    print(quiz)
 
 def print_assignments(course):
   assignments = course.get_assignments()
   
   for assignment in assignments:
-    print(assignment)
-#/quizlist
-#/assignmentlist
-#/help
+    if assignment.name[0]=='H':
+      print(assignment)
 
 def help(input):
   if(input == "ungraded"):
@@ -146,9 +142,6 @@ def help(input):
     print("Here is a list of all commands, please use help+desiredcommand for more info on specific commands")
     print("ungraded\nchecksub\nmsgquiz\nquizreport\nquizsub\ntotalnumber\nprintassignments\nstudentids")
 
-
-
-
 if __name__ == "__main__":
   args = sys.argv[1].split(' ')
   cmd = args[0]
@@ -164,7 +157,7 @@ if __name__ == "__main__":
   if count > 3:
     arg4 = args[3]
 
-  if count > 4:
+  if count >= 4:
     del args[0:2]
     for word in args:
       s += word
