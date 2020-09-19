@@ -36,7 +36,9 @@ def main(command, arg2, arg3, arg4):
   if(argSplit == 'printassignments'):
     print_assignments(course)
   if(argSplit == 'studentids'):
-    studentid(course)
+    student_id(course)
+  if(argSplit== 'help'):
+    help(arg3)
 
 # NEED PRINT
 def user_info(user_id,course):
@@ -93,7 +95,7 @@ def num_students(course):
   for user in users:
     taSize+=1
 
-def studentid(course):
+def student_id(course):
   studentSize = 0
   users = course.get_users(enrollment_type=['student'])
   for user in users:
@@ -113,8 +115,30 @@ def print_assignments(course):
 #/assignmentlist
 #/help
 
+def help(input):
+  if(input == "ungraded"):
+    print("Prints out all the ungraded assignments\n")
+  elif(input == "checksub"):
+    print("For a given user id see if they submitted a specific assignment\n")
+  elif(input == "msgquiz"):
+    print("Use this cmd to broadcast a message to students during a quiz\n")
+  elif(input == "quizreport"):
+    print("Gets quiz report\n")
+  elif(input == "quizsub"):
+    print("Prints out statistics relating to a specific quiz id\n")
+  elif(input == "totalnumber"):
+    print("Displays the total number of users enrolled in the class")
+  elif(input == "printassignments"):
+    print("Prints out all assignments for the class\n")
+  elif(input == "studentids"):
+    print("Displays student name and associated user id number\n")
+  else:
+    print("Here is a list of all commands, please use help+desiredcommand for more info on specific commands\n")
+    print("ungraded\nchecksub\n\nmsgquiz\nquizreport\nquizsub\ntotalnumber\nprintassignments\nstudentids")
 
-    
+
+
+
 if __name__ == "__main__":
 	args = sys.argv[1].split(' ')
 	cmd = args[0]
