@@ -158,6 +158,7 @@ if __name__ == "__main__":
 	arg2 = ''
 	arg3 = ''
 	arg4 = ''
+	s = ''
 	count = len(args)
 	if count > 1:
 		arg2 = args[1]
@@ -165,6 +166,12 @@ if __name__ == "__main__":
 		arg3 = args[2]
 	if count > 3:
 		arg4 = args[3]
-
+    
+	if count > 4:
+		args.remove(0)
+		for word in args:
+			s += word
+			s += ' '
+		arg3 = s
 	main(cmd, arg2, arg3, arg4)
 	sys.stdout.flush()
