@@ -29,10 +29,10 @@ def main(command, arg2, arg3, arg4):
     quiz_message(arg2,arg3,course)
   elif(argSplit == 'quizreport'):
     quiz_report(arg2)
-  if(argSplit == 'quizsub'):
+  elif(argSplit == 'quizsub'):
    quiz = course.get_quiz 
    get_quiz_submissions(quiz)
-  if(argSplit == 'totalnumber'):
+  elif(argSplit == 'totalnumber'):
     num_students(canvas.get_course(arg2))
   elif(argSplit == 'assignments'):
     print_assignments(course)
@@ -62,11 +62,8 @@ def submission_check(user_by_id,assn):
 def quiz_message(first,second,course):        #uncomment out message stuff?
   quizzes = course.get_quizzes()
   quiz = course.get_quiz(17786391)       # insert ID
-quiz.broadcast_message({
-  "body": second,   # arg 2
-  "recipients": "all",       # arg 3
-  "subject": first             # arg 4 ? 
-})
+  var = quiz.broadcast_message({"body": second, "recipients": "submitted", "subject": first})
+  print("Message broadcasted.")
 
 ###### NEED PRINT
 def quiz_report(quiz):
@@ -153,26 +150,30 @@ def help(input):
 
 
 if __name__ == "__main__":
-	args = sys.argv[1].split(' ')
-	cmd = args[0]
-	arg2 = ''
-	arg3 = ''
-	arg4 = ''
-	s = ''
-	count = len(args)
-	if count > 1:
+  print("Hi")
+  args = sys.argv[1].split(' ')
+  cmd = args[0]
+  arg2 = ''
+  arg3 = ''
+  arg4 = ''
+  s = ''
+  count = len(args)
+  if count > 1:
 		arg2 = args[1]
-	if count > 2:
+  if count > 2:
 		arg3 = args[2]
-	if count > 3:
+  if count > 3:
 		arg4 = args[3]
     
-	if count > 4:
+  if count > 4:
 		args.remove(0)
-		args.remove(1)
+		args.remove(0)
 		for word in args:
 			s += word
 			s += ' '
 		arg3 = s
-	main(cmd, arg2, arg3, arg4)
-	sys.stdout.flush()
+  print(cmd)
+  print(arg2)
+  print(arg3)
+  main(cmd, arg2, arg3, arg4)
+  sys.stdout.flush()
