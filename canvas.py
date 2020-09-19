@@ -94,6 +94,8 @@ def num_students(course):
   users = course.get_users(enrollment_type=['ta'])
   for user in users:
     taSize+=1
+  print(studentSize+" students")
+  print(taSize+" TAs")
 
 def student_id(course):
   studentSize = 0
