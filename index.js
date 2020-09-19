@@ -42,7 +42,7 @@ app.post('/canvasbot', (req, res) => {
 
   const { spawn } = require('child_process');
   const pyProg = spawn('python', ['canvas.py', args]);
-
+  //console.log(pyProg);
 
   function pyScript(body) {
     return new Promise(function (fulfill) {
@@ -69,6 +69,7 @@ app.post('/canvasbot', (req, res) => {
         console.log('Error getting chatbot_token from Zoom.', error);
       } else {
         body = JSON.parse(body);
+        // console.log(body.access_token);
         pyScript(body);
       }
     })
