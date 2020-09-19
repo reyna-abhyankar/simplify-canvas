@@ -2,7 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
-const { send } = require('process');
+
+const { Client } = require('pg');
+const pg = new Client({connectionString: process.env.DATABASE_URL});
+
+pg.connect().catch((error) => {
+  console.log('Error connecting to database', error)
+})
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -38,24 +44,41 @@ app.get('/documentation', (req, res) => {
 app.post('/canvasbot', (req, res) => {
   console.log(req.body);
   let args = req.body.payload.cmd;
-  let returnData = 'ye';
+  let returnData = '';
 
   const { spawn } = require('child_process');
   const pyProg = spawn('python', ['canvas.py', args]);
-  //console.log(pyProg);
 
-  function pyScript(body) {
+  function pyScript(token) {
     return new Promise(function (fulfill) {
-      pyProg.stdout.on('data', function(data) {
+      pyProg.stdout.on('data', function (data) {
         returnData = data.toString();
         fulfill(returnData);
       });
     }).then(() => {
-      sendChat(body.access_token, returnData);
+      sendChat(token, returnData);
     });
   }
 
-  getChatbotToken();
+  if (req.headers.authorization === process.env.zoom_verification_token) {
+    res.status(200);
+    res.send();
+    pg.query('SELECT * FROM chatbot_token', (error, results) => {
+      if (error) {
+        console.log('Error getting chatbot_token from database.', error);
+      } else {
+        if (results.rows[0].expires_on > (new Date().getTime() / 1000)) {
+          // console.log(results.rows[0].token);
+          pyScript(results.rows[0].token);
+        } else {
+          getChatbotToken();
+        }
+      }
+    });
+  } else {
+    res.status(401);
+    res.send('Unauthorized request to Canvas Chatbot for Zoom.');
+  }
 
   function getChatbotToken () {
     request({
@@ -69,7 +92,15 @@ app.post('/canvasbot', (req, res) => {
         console.log('Error getting chatbot_token from Zoom.', error);
       } else {
         body = JSON.parse(body);
-        pyScript(body);
+
+        pg.query(`UPDATE chatbot_token SET token = '${body.access_token}', expires_on = ${(new Date().getTime() / 1000) + body.expires_in}`, (error, results) => {
+          if (error) {
+            console.log('Error setting chatbot_token in database.', error);
+          } else {
+            pyScript(body.access_token);
+          }
+        });
+        
       }
     })
   }
@@ -105,17 +136,6 @@ app.post('/canvasbot', (req, res) => {
       }
     });
   }
-});
-
-app.get('/course', (req, res) => {
-  const { spawn } = require('child_process');
-  const pyProg = spawn('python', ['canvas.py']);
-
-  pyProg.stdout.on('data', function(data) {
-      console.log(data.toString());
-      res.write(data);
-      res.end('end');
-  });
 });
 
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
