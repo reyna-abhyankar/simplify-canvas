@@ -48,7 +48,6 @@ app.post('/canvasbot', (req, res) => {
     return new Promise(function (fulfill) {
       pyProg.stdout.on('data', function(data) {
         returnData = data.toString();
-        console.log("Python "+returnData);
         fulfill(returnData);
       });
     }).then(() => {
@@ -76,7 +75,6 @@ app.post('/canvasbot', (req, res) => {
   }
 
   function sendChat (chatbotToken, data) {
-    console.log("Send chat "+data);
     request({
       url: 'https://api.zoom.us/v2/im/chat/messages',
       method: 'POST',
