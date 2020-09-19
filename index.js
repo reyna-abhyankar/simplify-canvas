@@ -1,53 +1,55 @@
-import {PythonShell} from 'python-shell'
-require('dotenv').config()
-const express = require('express')
-const bodyParser = require('body-parser')
-const request = require('request')
+import {PythonShell} from 'python-shell';
+let pyshell = new PythonShell('scripts.py');
 
-const app = express()
-const port = process.env.PORT || 4000
+require('dotenv').config();
+const express = require('express');
+const bodyParser = require('body-parser');
+const request = require('request');
 
-app.use(bodyParser.json())
+const app = express();
+const port = process.env.PORT || 4000;
+
+app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the Canvas Chatbot for Zoom!')
-})
+  res.send('Welcome to the Canvas Chatbot for Zoom!');
+});
 
 app.get('/authorize', (req, res) => {
-  res.redirect('https://zoom.us/launch/chat?jid=robot_' + process.env.zoom_bot_jid)
-})
+  res.redirect('https://zoom.us/launch/chat?jid=robot_' + process.env.zoom_bot_jid);
+});
 
 app.get('/support', (req, res) => {
-  res.send('Contact forvirenra@gmail.com')
-})
+  res.send('Contact forvirenra@gmail.com');
+});
 
 app.get('/privacy', (req, res) => {
-  res.send('The Canvas Chatbot for Zoom does not store any user data.')
-})
+  res.send('The Canvas Chatbot for Zoom does not store any user data.');
+});
 
 app.get('/terms', (req, res) => {
-  res.send('By installing the Canvas Chatbot for Zoom, you are accept and agree to these terms...')
-})
+  res.send('By installing the Canvas Chatbot for Zoom, you are accept and agree to these terms...');
+});
 
 //Docs
 app.get('/documentation', (req, res) => {
-  res.send('')
-})
+  res.send('');
+});
 
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
-  res.send(process.env.zoom_verification_code)
-})
+  res.send(process.env.zoom_verification_code);
+});
 
 //Command
-app.post('/[x]', (req, res) => {
-  console.log(req.body)
-  res.send('Chat received')
-})
+app.post('/assignments', (req, res) => {
+  console.log(req.body);
+  res.send('Chat received');
+});
 
 app.post('/deauthorize', (req, res) => {
   if (req.headers.authorization === process.env.zoom_verification_token) {
-    res.status(200)
-    res.send()
+    res.status(200);
+    res.send();
     request({
       url: 'https://api.zoom.us/oauth/data/compliance',
       method: 'POST',
@@ -66,15 +68,15 @@ app.post('/deauthorize', (req, res) => {
       }
     }, (error, httpResponse, body) => {
       if (error) {
-        console.log(error)
+        console.log(error);
       } else {
-        console.log(body)
+        console.log(body);
       }
-    })
+    });
   } else {
-    res.status(401)
-    res.send('Unauthorized request to Canvas Chatbot for Zoom.')
+    res.status(401);
+    res.send('Unauthorized request to Canvas Chatbot for Zoom.');
   }
-})
+});
 
-app.listen(port, () => console.log(`Canvas Chatbot for Zoom listening on port ${port}!`))
+app.listen(port, () => console.log(`Canvas Chatbot for Zoom listening on port ${port}!`));
