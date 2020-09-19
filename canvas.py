@@ -25,22 +25,22 @@ def main(command, arg2, arg3, arg4):
   elif(argSplit == 'checksub'):
     assignment = course.get_assignment(arg3)
     submission_check(arg2,assignment)
-  if(argSplit == 'msgquiz'): #TODO:print list of quiz 
+  elif(argSplit == 'msgquiz'): #TODO:print list of quiz 
     quiz_message(arg2,canvas.get_course(arg3))
-  if(argSplit == 'quizreport'):
+  elif(argSplit == 'quizreport'):
     quiz_report(arg2)
-  if(argSplit == 'quizsub'):
+  elif(argSplit == 'quizsub'):
     get_quiz_submissions(arg2,arg3)
-  if(argSplit == 'totalnumber'):
+  elif(argSplit == 'totalnumber'):
     num_students(canvas.get_course(arg2))
-  if(argSplit == 'printassignments'):
+  elif(argSplit == 'assignments'):
     print_assignments(course)
-  if(argSplit == 'studentids'):
+  elif(argSplit == 'studentids'):
     student_id(course)
-  if(argSplit== 'help'):
+  else:
     help(arg2)
 
-# NEED PRINT
+# Deprecated
 def user_info(user_id,course):
   user_by_id = course.get_user(user_id)
   users = course.get_users(search_term='Gaurav Mehta')
@@ -51,12 +51,12 @@ def ungraded_assignments(course):
   for assignment in ungraded_assn:
     print(assignment)
 
-# NEED PRINT
+###### NEED PRINT
 def submission_check(user_by_id,assn):
   subs = assn.get_submissions()
   submission = assn.get_submission(user_by_id.id)
 
-# NEED PRINT
+###### NEED PRINT
 def quiz_message(quiz_id,course):        #uncomment out message stuff?
   quizzes = course.get_quizzes()
   quiz = course.get_quiz(quiz_id)       # insert ID
@@ -66,7 +66,7 @@ def quiz_message(quiz_id,course):        #uncomment out message stuff?
 #   "subject": "ATTENTION"             # arg 4 ? 
 # })
 
-# NEED PRINT
+###### NEED PRINT
 def quiz_report(quiz):
   reports = quiz.get_all_quiz_reports()
   questions = quiz.get_questions()
@@ -78,7 +78,7 @@ def get_quiz_submissions(quiz,quiz_id):
   stats = quiz.get_statistics()
   print(stats)
 
-# NEED PRINT
+
 def num_students(course):
   studentSize = 0
   users = course.get_users(enrollment_type=['student'])
