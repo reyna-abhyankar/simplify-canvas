@@ -25,8 +25,8 @@ def main(command, arg2, arg3, arg4):
   elif(argSplit == 'checksub'):
     assignment = course.get_assignment(arg3)
     submission_check(arg2,assignment)
-  elif(argSplit == 'msgquiz'): #TODO:print list of quiz 
-    quiz_message(arg2,canvas.get_course(arg3))
+  elif(argSplit == 'broadcast'): #TODO:print list of quiz 
+    quiz_message(arg2,arg3,course)
   elif(argSplit == 'quizreport'):
     quiz_report(arg2)
   if(argSplit == 'quizsub'):
@@ -56,21 +56,23 @@ def ungraded_assignments(course):
 def submission_check(user_by_id,assn):
   subs = assn.get_submissions()
   submission = assn.get_submission(user_by_id.id)
+  print(submission)
 
 ###### NEED PRINT
-def quiz_message(quiz_id,course):        #uncomment out message stuff?
+def quiz_message(first,second,course):        #uncomment out message stuff?
   quizzes = course.get_quizzes()
-  quiz = course.get_quiz(quiz_id)       # insert ID
-# quiz.broadcast_message({
-#   "body": "Please take the quiz.",   # arg 2
-#   "recipients": "unsubmitted",       # arg 3
-#   "subject": "ATTENTION"             # arg 4 ? 
-# })
+  quiz = course.get_quiz(17786391)       # insert ID
+quiz.broadcast_message({
+  "body": second,   # arg 2
+  "recipients": "all",       # arg 3
+  "subject": first             # arg 4 ? 
+})
 
 ###### NEED PRINT
 def quiz_report(quiz):
   reports = quiz.get_all_quiz_reports()
-  questions = quiz.get_questions()
+  for report in reports:
+    print(report)
     # can also get by ID
 
 def get_quiz_submissions(quiz):
