@@ -7,10 +7,19 @@ from canvasapi import Canvas
 
 # Canvas API
 API_URL = "https://canvas.instructure.com/"
-#API_KEY = "7~a0WZUQK2LiJBRU9GBGIIb99it5rA8MMB8Jt5ANEv0C2ilgi0hgwsztOVPebnT0DD"
 API_KEY = os.environ['canvas_api_key']
 
-# Initialize Canvas object
+# Variables
+UNGRADED = 'ungraded'
+COURSES = 'courses'
+CHECKSUB = 'checksub'
+BROADCAST = 'broadcast'
+#QUIZ_REPORT = 'quizreport'
+QUIZ_STAT = 'quizstat'
+QUIZZES = 'quizzes'
+TOTAL_NUMBER = 'count'
+ASSIGNMENTS = 'assignments'
+STUDENT_IDS = 'studentids'
 
 def main(command, arg2, arg3, arg4):
   canvas = Canvas(API_URL, API_KEY)
@@ -19,24 +28,26 @@ def main(command, arg2, arg3, arg4):
 
   argSplit = command.lower()
   course = canvas.get_course(2353385)
-  if(argSplit == 'ungraded'):
+  if(argSplit == UNGRADED):
     course =canvas.get_course(arg2)
     ungraded_assignments(course)
-  elif(argSplit == 'checksub'):
+  elif(argSplit == COURSES):
+    for course in courses:
+      print(course)
+  elif(argSplit == CHECKSUB):
     assignment = course.get_assignment(arg3)
     submission_check(arg2,assignment)
-  elif(argSplit == 'broadcast'):
+  elif(argSplit == BROADCAST):
     quiz_message(arg2,arg3,course)
-  elif(argSplit == 'quizreport'):
-    quiz_report(arg2)
-  elif(argSplit == 'quizsub'):
-   quiz = course.get_quiz 
-   get_quiz_submissions(quiz)
-  elif(argSplit == 'totalnumber'):
+  #elif(argSplit == QUIZ_REPORT):
+  #  quiz_report(course.get_quiz(arg2))
+  elif(argSplit == QUIZ_STAT):
+    get_quiz_submissions(course.get_quiz(arg2))
+  elif(argSplit == TOTAL_NUMBER):
     num_students(canvas.get_course(arg2))
-  elif(argSplit == 'assignments'):
+  elif(argSplit == ASSIGNMENTS):
     print_assignments(course)
-  elif(argSplit == 'quizzes'):
+  elif(argSplit == QUIZZES):
     print_quizzes(course)
   elif(argSplit == 'studentids'):
     student_id(course)
@@ -66,16 +77,22 @@ def quiz_message(first,second,course):
   quiz.broadcast_message({"body": second, "recipients": "all", "subject": first})
   print("Message broadcasted!", end='')
 
-###### NEED PRINT
+# Deprecated
 def quiz_report(quiz):
   reports = quiz.get_all_quiz_reports()
   for report in reports:
-    print(report)
+    print(report['student_analysis'])
 
 def get_quiz_submissions(quiz):
-  quiz_subs = quiz.get_submissions()
   stats = quiz.get_statistics()
-  print(stats)
+  stat = stats[0]
+  sub_stat = stat.submission_statistics
+  print("Submissions: ", sub_stat['unique_count'])
+  print("Average: ", sub_stat['score_average'])
+  print("High: ", sub_stat['score_high'])
+  print("Low: ", sub_stat['score_low'])
+  print("Standard Deviation: ", sub_stat['score_stdev'])
+  print("Average Time Spent: ", sub_stat['duration_average'])
 
 def num_students(course):
   studentSize = 0
@@ -92,8 +109,10 @@ def num_students(course):
   users = course.get_users(enrollment_type=['ta'])
   for user in users:
     taSize+=1
-  print(studentSize+" students")
-  print(taSize+" TAs")
+  
+  print("%s students" % studentSize)
+  print("%s teachers" % teacherSize)
+  print("%s TAs" % taSize)
 
 def student_id(course):
   studentSize = 0
@@ -114,33 +133,40 @@ def print_assignments(course):
       print(assignment)
 
 def help(input):
-  if(input == "ungraded"):
+  if(input == UNGRADED):
     print("Prints out all the ungraded assignments\n")
-    print("Ex: ungraded [course_id]")
-  elif(input == "checksub"):
-    print("For a given user id see if they submitted a specific assignment\n")
-    print("Ex: checksub [user_id] [assignment_id]")
-  elif(input == "msgquiz"):
-    print("Use this cmd to broadcast a message to students during a quiz\n")
-    print("Ex: msgquiz [quiz_id]")
-  elif(input == "quizreport"):
-    print("Gets quiz report\n")
-    print("Ex: quizreport [quiz_id]")
-  elif(input == "quizsub"):
-    print("Prints out statistics relating to a specific quiz id\n")
-    print("Ex: quizsub [quiz]")
-  elif(input == "totalnumber"):
-    print("Displays the total number of users enrolled in the class\n")
-    print("Ex: totalnumber [course_id]")
-  elif(input == "printassignments"):
+    print("Usage: %s [course_id]" % UNGRADED)
+  elif(input == COURSES):
+    print("Prints out all your courses\n")
+    print("Usage: %s" % COURSES)
+  elif(input == CHECKSUB):
+    print("See if a student submitted a specific assignment\n")
+    print("Usage: %s [user_id] [assignment_id]" % CHECKSUB)
+  elif(input == BROADCAST):
+    print("Use this command to broadcast a message to students during a quiz\n")
+    print("Usage: %s [quiz_id]" % BROADCAST)
+  #elif(input == QUIZ_REPORT):
+  #  print("Gets quiz report\n")
+  #  print("Usage: %s [quiz_id]" % QUIZ_REPORT)
+  elif(input == QUIZ_STAT):
+    print("Prints out statistics for a specific quiz\n")
+    print("Usage: %s [quiz]" % QUIZ_STAT)
+  elif(input == QUIZZES):
+    print("Get all your quizzes and their IDs\n")
+    print("Usage: %s" % QUIZZES)
+  elif(input == TOTAL_NUMBER):
+    print("Displays the total number of people enrolled in the class (including TAs)\n")
+    print("Usage: %s [course_id]" % TOTAL_NUMBER)
+  elif(input == ASSIGNMENTS):
     print("Prints out all assignments for the class\n")
-    print("Ex: printassignments [course_id]")
-  elif(input == "studentids"):
-    print("Displays student name and associated user id number\n")
-    print("studentids [course_id]")
+    print("Usage: %s [course_id]" % ASSIGNMENTS)
+  elif(input == STUDENT_IDS):
+    print("Displays all student names and associated canvas ID for a course\n")
+    print("Usage: %s [course_id]" % STUDENT_IDS)
   else:
-    print("Here is a list of all commands, please use help+desiredcommand for more info on specific commands")
-    print("ungraded\nchecksub\nmsgquiz\nquizreport\nquizsub\ntotalnumber\nprintassignments\nstudentids")
+    print("Here is a list of all commands, please use help <command> for more info on specific commands. Case doesn't matter!\n")
+    print("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s" % 
+      (UNGRADED, COURSES, CHECKSUB, BROADCAST, QUIZ_STAT, QUIZZES, TOTAL_NUMBER, ASSIGNMENTS, STUDENT_IDS))
 
 if __name__ == "__main__":
   args = sys.argv[1].split(' ')
