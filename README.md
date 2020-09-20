@@ -1,6 +1,6 @@
-# hackmit-chatbot
+# Simplify Canvas
 
-<h2> Simplify Canvas</h2>
+<h2> Teachers </h2>
 In the middle of class but need some quick information about quiz statistics? Want to send an emergency message to your students? Or just want to see which assignments you still have to grade? Simplify Canvas is here to help! It's a Zoom chatbot that you can easily interact with to pull up lots of data just by typing a command. 
 
 <h2>Use the following commands to quickly get information from Canvas for teachers.</h2>
