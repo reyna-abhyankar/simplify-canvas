@@ -29,7 +29,7 @@ def main(command, arg2, arg3, arg4):
   argSplit = command.lower()
   course = canvas.get_course(2353385)
   if(argSplit == UNGRADED):
-    course =canvas.get_course(arg2)
+    course = canvas.get_course(arg2)
     ungraded_assignments(course)
   elif(argSplit == COURSES):
     for course in courses:
@@ -87,12 +87,14 @@ def get_quiz_submissions(quiz):
   stats = quiz.get_statistics()
   stat = stats[0]
   sub_stat = stat.submission_statistics
+  std_dev = float(sub_stat['score_stdev'])
+  time = int(sub_stat['duration_average'])
   print("Submissions: ", sub_stat['unique_count'])
   print("Average: ", sub_stat['score_average'])
   print("High: ", sub_stat['score_high'])
   print("Low: ", sub_stat['score_low'])
-  print("Standard Deviation: ", sub_stat['score_stdev'])
-  print("Average Time Spent: ", sub_stat['duration_average'])
+  print("Standard Deviation: %0.2f" % std_dev)
+  print("Average Time Spent: %d seconds" % time)
 
 def num_students(course):
   studentSize = 0
@@ -134,35 +136,35 @@ def print_assignments(course):
 
 def help(input):
   if(input == UNGRADED):
-    print("Prints out all the ungraded assignments\n")
+    print("Gets the list of assignments that you haven't graded yet\n")
     print("Usage: %s [course_id]" % UNGRADED)
   elif(input == COURSES):
-    print("Prints out all your courses\n")
+    print("Displays all of your courses and their course ID\n")
     print("Usage: %s" % COURSES)
   elif(input == CHECKSUB):
-    print("See if a student submitted a specific assignment\n")
+    print("Checks if a student has submitted an assignment\n")
     print("Usage: %s [user_id] [assignment_id]" % CHECKSUB)
   elif(input == BROADCAST):
-    print("Use this command to broadcast a quick message to students\n")
+    print("Sends a message to all students' canvas inboxes and emails\n")
     print("Usage: %s [course_id] [subject] [message]" % BROADCAST)
     print("Ex: broadcast 2353385 ATTENTION Technical difficulties!!")
   #elif(input == QUIZ_REPORT):
   #  print("Gets quiz report\n")
   #  print("Usage: %s [quiz_id]" % QUIZ_REPORT)
   elif(input == QUIZ_STAT):
-    print("Prints out statistics for a specific quiz\n")
+    print("Instantly see statistics for any given quiz\n")
     print("Usage: %s [quiz]" % QUIZ_STAT)
   elif(input == QUIZZES):
-    print("Get all your quizzes and their IDs\n")
+    print("Get all the quizzes for a class\n")
     print("Usage: %s" % QUIZZES)
   elif(input == TOTAL_NUMBER):
-    print("Displays the total number of people enrolled in the class (including TAs)\n")
+    print("Quickly obtain the number of students, TAs, and teachers for a course\n")
     print("Usage: %s [course_id]" % TOTAL_NUMBER)
   elif(input == ASSIGNMENTS):
-    print("Prints out all assignments for the class\n")
+    print("Print all homework assignments for a class\n")
     print("Usage: %s [course_id]" % ASSIGNMENTS)
   elif(input == STUDENT_IDS):
-    print("Displays all student names and associated canvas ID for a course\n")
+    print("Get all student IDs\n")
     print("Usage: %s [course_id]" % STUDENT_IDS)
   else:
     print("Here is a list of all commands, please use help <command> for more info on specific commands. Case doesn't matter!\n")
