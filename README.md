@@ -9,8 +9,6 @@ In the middle of class but need some quick information about quiz statistics? Wa
 
 <strong>courses</strong> - displays all of your courses and their course ID
 
-<strong>submissions</strong> - checks if a student has submitted an assignment
-
 <strong>broadcast</strong> - sends a message to all students' canvas inboxes and emails
 
 <strong>quizstat</strong> - instantly see statistics for any given quiz
