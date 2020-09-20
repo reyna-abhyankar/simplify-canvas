@@ -87,14 +87,12 @@ def get_quiz_submissions(quiz):
   stats = quiz.get_statistics()
   stat = stats[0]
   sub_stat = stat.submission_statistics
-  std_dev = float(sub_stat['score_stdev'])
-  time = int(sub_stat['duration_average'])
   print("Submissions: ", sub_stat['unique_count'])
-  print("Average: ", sub_stat['score_average'])
-  print("High: ", sub_stat['score_high'])
-  print("Low: ", sub_stat['score_low'])
-  print("Standard Deviation: %0.2f" % std_dev)
-  print("Average Time Spent: %d seconds" % time)
+  print("Average: %0.2f" % float(sub_stat['score_average']))
+  print("High: %d" % int(sub_stat['score_high']))
+  print("Low: %d" % int(sub_stat['score_low']))
+  print("Standard Deviation: %0.2f" % float(sub_stat['score_stdev']))
+  print("Average Time Spent: %d seconds" % int(sub_stat['duration_average']))
 
 def num_students(course):
   studentSize = 0

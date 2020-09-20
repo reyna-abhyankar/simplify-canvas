@@ -42,7 +42,6 @@ app.post('/canvasbot', (req, res) => {
         console.log('Error getting chatbot_token from database.', error);
       } else {
         if (results.rows[0].expires_on > (new Date().getTime() / 1000)) {
-          // console.log(results.rows[0].token);
           pyScript(results.rows[0].token);
         } else {
           getChatbotToken();
