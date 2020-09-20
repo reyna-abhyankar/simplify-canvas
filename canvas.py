@@ -19,7 +19,7 @@ QUIZ_STAT = 'quizstat'
 QUIZZES = 'quizzes'
 TOTAL_NUMBER = 'count'
 ASSIGNMENTS = 'assignments'
-STUDENT_IDS = 'studentids'
+STUDENT_IDS = 'students'
 
 def main(command, arg2, arg3, arg4):
   canvas = Canvas(API_URL, API_KEY)
@@ -44,12 +44,15 @@ def main(command, arg2, arg3, arg4):
   elif(argSplit == QUIZ_STAT):
     get_quiz_submissions(course.get_quiz(arg2))
   elif(argSplit == TOTAL_NUMBER):
+    if arg2=='-':
+      print("Remember to enter the course id!")
+      return
     num_students(canvas.get_course(arg2))
   elif(argSplit == ASSIGNMENTS):
     print_assignments(course)
   elif(argSplit == QUIZZES):
     print_quizzes(course)
-  elif(argSplit == 'studentids'):
+  elif(argSplit == STUDENT_IDS):
     student_id(course)
   else:
     help(arg2)
@@ -62,16 +65,15 @@ def user_info(user_id,course):
 
 def ungraded_assignments(course):
   ungraded_assn = course.get_assignments(bucket='ungraded')
+  print("Ungraded assignments")
   for assignment in ungraded_assn:
     print(assignment)
 
-###### NEED PRINT
 def submission_check(user_by_id,assn):
   subs = assn.get_submissions()
   submission = assn.get_submission(user_by_id.id)
   print(submission)
 
-###### NEED PRINT
 def quiz_message(course,subject,body):
   quiz = course.get_quiz(6128124)  # currently quiz 1
   quiz.broadcast_message({"body": body, "recipients": "all", "subject": subject})
@@ -87,14 +89,19 @@ def get_quiz_submissions(quiz):
   stats = quiz.get_statistics()
   stat = stats[0]
   sub_stat = stat.submission_statistics
+  duration = int(sub_stat['duration_average'])/60
+
   print("Submissions: ", sub_stat['unique_count'])
   print("Average: %0.2f" % float(sub_stat['score_average']))
   print("High: %d" % int(sub_stat['score_high']))
   print("Low: %d" % int(sub_stat['score_low']))
   print("Standard Deviation: %0.2f" % float(sub_stat['score_stdev']))
-  print("Average Time Spent: %d seconds" % int(sub_stat['duration_average']))
+  print("Average Time Spent: %d minutes" % duration)
 
 def num_students(course):
+  if course=='-':
+    print("Enter the course id!")
+    return
   studentSize = 0
   users = course.get_users(enrollment_type=['student'])
   for user in users:
@@ -110,9 +117,9 @@ def num_students(course):
   for user in users:
     taSize+=1
   
-  print("%s students" % studentSize)
-  print("%s teachers" % teacherSize)
-  print("%s TAs" % taSize)
+  print("Teachers: %d" % teacherSize)
+  print("TAs: %d" % taSize)
+  print("Students: %d" % studentSize)
 
 def student_id(course):
   studentSize = 0
@@ -172,10 +179,10 @@ def help(input):
 if __name__ == "__main__":
   args = sys.argv[1].split(' ')
   cmd = args[0]
-  arg2 = ''
-  arg3 = ''
-  arg4 = ''
-  s = ''
+  arg2 = '-'
+  arg3 = '-'
+  arg4 = '-'
+  s = '-'
   count = len(args)
   if count > 1:
     arg2 = args[1]
