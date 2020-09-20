@@ -15,32 +15,6 @@ const port = process.env.PORT || 4000;
 
 app.use(bodyParser.json());
 
-/* Probably don't need these */
-app.get('/', (req, res) => {
-  res.send('Welcome to the Canvas Chatbot for Zoom!');
-});
-
-app.get('/authorize', (req, res) => {
-  res.redirect('https://zoom.us/launch/chat?jid=robot_' + process.env.zoom_bot_jid);
-});
-
-app.get('/support', (req, res) => {
-  res.send('Contact forvirenra@gmail.com');
-});
-
-app.get('/privacy', (req, res) => {
-  res.send('The Canvas Chatbot for Zoom does not store any user data.');
-});
-
-app.get('/terms', (req, res) => {
-  res.send('By installing the Canvas Chatbot for Zoom, you are accept and agree to these terms...');
-});
-
-app.get('/documentation', (req, res) => {
-  res.send('');
-});
-// ************************* //
-
 app.post('/canvasbot', (req, res) => {
   console.log(req.body);
   let args = req.body.payload.cmd;
@@ -138,6 +112,34 @@ app.post('/canvasbot', (req, res) => {
   }
 });
 
+app.listen(port, () => console.log(`Canvas Chatbot for Zoom listening on port ${port}!`));
+
+/*************************************/
+/* Won't need these until deployment */
+app.get('/', (req, res) => {
+  res.send('Welcome to the Canvas Chatbot for Zoom!');
+});
+
+app.get('/authorize', (req, res) => {
+  res.redirect('https://zoom.us/launch/chat?jid=robot_' + process.env.zoom_bot_jid);
+});
+
+app.get('/support', (req, res) => {
+  res.send('Contact forvirenra@gmail.com');
+});
+
+app.get('/privacy', (req, res) => {
+  res.send('The Canvas Chatbot for Zoom does not store any user data.');
+});
+
+app.get('/terms', (req, res) => {
+  res.send('By installing the Canvas Chatbot for Zoom, you are accept and agree to these terms...');
+});
+
+app.get('/documentation', (req, res) => {
+  res.send('');
+});
+
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
   res.send(process.env.zoom_verification_code);
 });
@@ -175,4 +177,3 @@ app.post('/deauthorize', (req, res) => {
   }
 });
 
-app.listen(port, () => console.log(`Canvas Chatbot for Zoom listening on port ${port}!`));
