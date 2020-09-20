@@ -1,21 +1,24 @@
 # hackmit-chatbot
 
-Use the following commands to quickly get information from Canvas for teachers.
+<h2> Simplify Canvas</h2>
+In the middle of class but need some quick information about quiz statistics? Want to send an emergency message to your students? Or just want to see which assignments you still have to grade? Simplify Canvas is here to help! It's a Zoom chatbot that you can easily interact with to pull up lots of data just by typing a command. 
 
-ungraded - gets the list of assignments that you haven't graded yet
+<h2>Use the following commands to quickly get information from Canvas for teachers.</h2>
 
-courses - displays all of your courses and their course ID
+<strong>ungraded</strong> - gets the list of assignments that you haven't graded yet
 
-submissions - checks if a student has submitted an assignment
+<strong>courses</strong> - displays all of your courses and their course ID
 
-broadcast - sends a message to all students' canvas inboxes and emails
+<strong>submissions</strong> - checks if a student has submitted an assignment
 
-quizstat - instantly see statistics for any given quiz
+<strong>broadcast</strong> - sends a message to all students' canvas inboxes and emails
 
-count - quickly obtain the number of students, TAs, and teachers for a course
+<strong>quizstat</strong> - instantly see statistics for any given quiz
 
-assignments - print all homework assignments for a class
+<strong>count</strong> - quickly obtain the number of students, TAs, and teachers for a course
 
-quizzes - get all the quizzes for a class
+<strong>assignments</strong> - print all homework assignments for a class
 
-studentids - get all student IDs
+<strong>quizzes</strong> - get all the quizzes for a class
+
+<strong>studentids</strong> - get all student IDs
