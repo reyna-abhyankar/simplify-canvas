@@ -12,7 +12,7 @@ API_KEY = os.environ['canvas_api_key']
 # Variables
 UNGRADED = 'ungraded'
 COURSES = 'courses'
-CHECKSUB = 'checksub'
+CHECKSUB = 'submissions'
 BROADCAST = 'broadcast'
 #QUIZ_REPORT = 'quizreport'
 QUIZ_STAT = 'quizstat'
@@ -38,7 +38,7 @@ def main(command, arg2, arg3, arg4):
     assignment = course.get_assignment(arg3)
     submission_check(arg2,assignment)
   elif(argSplit == BROADCAST):
-    quiz_message(arg2,arg3,course)
+    quiz_message(canvas.get_course(arg2),arg3,arg4)
   #elif(argSplit == QUIZ_REPORT):
   #  quiz_report(course.get_quiz(arg2))
   elif(argSplit == QUIZ_STAT):
@@ -72,9 +72,9 @@ def submission_check(user_by_id,assn):
   print(submission)
 
 ###### NEED PRINT
-def quiz_message(first,second,course):
-  quiz = course.get_quiz(6128124)
-  quiz.broadcast_message({"body": second, "recipients": "all", "subject": first})
+def quiz_message(course,subject,body):
+  quiz = course.get_quiz(6128124)  # currently quiz 1
+  quiz.broadcast_message({"body": body, "recipients": "all", "subject": subject})
   print("Message broadcasted!", end='')
 
 # Deprecated
@@ -143,8 +143,9 @@ def help(input):
     print("See if a student submitted a specific assignment\n")
     print("Usage: %s [user_id] [assignment_id]" % CHECKSUB)
   elif(input == BROADCAST):
-    print("Use this command to broadcast a message to students during a quiz\n")
-    print("Usage: %s [quiz_id]" % BROADCAST)
+    print("Use this command to broadcast a quick message to students\n")
+    print("Usage: %s [course_id] [subject] [message]" % BROADCAST)
+    print("Ex: broadcast 2353385 ATTENTION Technical difficulties!!")
   #elif(input == QUIZ_REPORT):
   #  print("Gets quiz report\n")
   #  print("Usage: %s [quiz_id]" % QUIZ_REPORT)
@@ -184,10 +185,10 @@ if __name__ == "__main__":
     arg4 = args[3]
 
   if count >= 4:
-    del args[0:2]
+    del args[0:3]
     for word in args:
       s += word
       s += ' '
-    arg3 = s
+    arg4 = s
   main(cmd, arg2, arg3, arg4)
   sys.stdout.flush()
