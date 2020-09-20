@@ -21,4 +21,4 @@ In the middle of class but need some quick information about quiz statistics? Wa
 
 <strong>quizzes</strong> - get all the quizzes for a class
 
-<strong>studentids</strong> - get all student IDs
+<strong>students</strong> - get the course roster
